@@ -145,7 +145,7 @@ test('should remove expense from firebase', (done) => {
 test('should edit expense in firebase', (done) => {
   const store = createMockStore({});
   const id = expenses[1].id;
-  const updates = { note: 'I was edited', amount: 9200};
+  const updates = { note: 'I was edited' };
 
   store.dispatch(startEditExpense(id, updates)).then(() => {
     const actions = store.getActions();
@@ -154,6 +154,11 @@ test('should edit expense in firebase', (done) => {
       id,
       updates
     });
+
+    return database.ref(`expenses/${id}`).once('value');
+  }).then(snapshot => {
+    const val = snapshot.val();
+    expect(val.note).toBe(updates.note);
     done();
   });
 });
